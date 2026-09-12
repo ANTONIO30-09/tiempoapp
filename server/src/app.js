@@ -7,6 +7,7 @@ require('dotenv').config();
 const sequelize = require('./config/sequelize');
 const authRoutes = require('./routes/authRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
+const creditosRoutes = require('./routes/creditosRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -18,6 +19,7 @@ app.use(express.json());
 // Rutas de API
 app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/creditos', creditosRoutes);
 
 // Ruta de salud
 app.get('/api/health', (req, res) => {
