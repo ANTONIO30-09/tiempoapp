@@ -5,45 +5,59 @@ Este archivo se actualiza al inicio y al fin de cada sesión de trabajo.
 
 **Última actualización:** 2026-09-12
 **Rama de integración:** `dev`
-**Último commit en `dev`:** `26c7353` (Merge PR #4: frontend de perfiles)
-**Rama de trabajo activa:** `docs/verificacion-etapa-1` (PR #5)
+**Último commit en `dev`:** `f9984d9` (Merge PR #7: fix autorización + Jest)
+**Último commit en `main`:** `3ddb3c3` (Merge PR #6: cierre Etapa 1)
+**Rama de trabajo activa:** `feat/creditos-tiempo` (módulo de créditos)
 
 ---
 
 ## Estado por módulo
 
-### 1. Gestión de perfiles de usuario — COMPLETADO Y VERIFICADO
+### 1. Gestión de perfiles de usuario — COMPLETADO Y VERIFICADO (en `main`)
 
-**Backend (integrado en `dev` vía PR #2):**
+**Backend (PR #2):**
 - [x] Modelo `Usuario` con Sequelize (UUID, email único, habilidades, créditos de tiempo, avatar).
 - [x] Migración `20260905054746-create-usuario.js` aplicada en BD local.
-- [x] Registro y login con bcryptjs + JWT (`/api/auth/registro`, `/api/auth/login`).
-- [x] CRUD de usuarios protegido con middleware JWT (`/api/usuarios`).
+- [x] Registro y login con bcryptjs + JWT.
+- [x] CRUD de usuarios protegido con middleware JWT.
+- [x] Fix de autorización IDOR en `actualizar()` y `eliminar()` (PR #7): 403 si `req.usuario.id !== req.params.id`.
 
-**Frontend (integrado en `dev` vía PR #4):**
-- [x] Tailwind v4, react-router-dom, axios, Vitest/RTL configurados.
-- [x] Cliente HTTP con interceptor JWT y manejo de 401.
+**Frontend (PR #4):**
+- [x] Tailwind v4, react-router-dom, axios, Vitest/RTL.
 - [x] `AuthContext` con persistencia en `localStorage`.
 - [x] Formularios de registro, login y edición de perfil.
 - [x] Páginas Home, Registro, Login y Perfil.
-- [x] Rutas protegidas, navbar con logout, `ProtectedRoute`.
-- [x] 15 tests pasando (AuthContext, FormularioRegistro, FormularioLogin, ProtectedRoute).
+- [x] Rutas protegidas, navbar con logout.
 
-**Verificación end-to-end (sesión 2026-09-12):**
-- [x] Base de datos local creada: `tiempoapp` con usuario `tiempoapp_user`.
-- [x] Migración aplicada, tabla `usuarios` verificada en PostgreSQL.
-- [x] Backend levantado, health OK, registro vía curl OK, login + listado OK.
-- [x] Frontend levantado, flujo manual completo probado en navegador:
-  - Home → Registro → Perfil → Edición → Logout → Login → Perfil.
-  - Ruta protegida `/perfil` redirige a `/login` sin sesión.
-- [x] Sin errores en consola del navegador, ni en backend ni en frontend.
+**Tests:**
+- [x] 15 tests de frontend (Vitest + RTL) pasando.
+- [x] 7 tests de backend (Jest) pasando para `usuarioController`.
 
-**Pendientes del módulo:**
-- [ ] Cargar avatar (almacenamiento por definir).
-- [ ] Validación de formato de email más robusta (actualmente confía en `isEmail` de Sequelize).
+**Verificación end-to-end (2026-09-12):**
+- [x] Flujo completo probado en navegador contra backend real.
+- [x] Sin errores en consola ni en terminales.
 
-### 2. Créditos de tiempo
-- [ ] Pendiente. Solo existe el campo `creditos_tiempo` en el modelo `Usuario`, inicializado en 5.0 al registrarse. Falta el módulo de transferencia de créditos entre usuarios.
+### 2. Créditos de tiempo — EN DESARROLLO
+
+**Decisiones de diseño confirmadas:**
+- Transferencia instantánea, un solo estado: `completada`. El flujo propuesta/aceptación se difiere hasta que exista el módulo de servicios/publicaciones.
+- Reglas de negocio: saldo no negativo, sin auto-transferencia, horas > 0, atomicidad obligatoria, historial inmutable (cancelaciones = transacción inversa, nunca edición ni borrado). Sin tope máximo de horas por transacción.
+- Endpoints: `POST /api/creditos/transferir`, `GET /api/creditos/historial` (propio), `GET /api/creditos/saldo` (propio). Sin endpoint para ver historial de otro usuario.
+- Frontend: una sola página `/creditos` con saldo, formulario de transferencia e historial.
+- Referencia visual: `https://dribbble.com/shots/24858846-Crypto-Wallet-Dashboard` (adaptado: card de saldo + acción principal + historial; sin sidebar ni gráficos).
+
+**Backend:**
+- [ ] Modelo `Transaccion` y migración.
+- [ ] Controlador `creditosController` con transferencia atómica.
+- [ ] Rutas `/api/creditos`.
+- [ ] Tests Jest de `creditosController`.
+
+**Frontend:**
+- [ ] Página `/creditos` con card de saldo.
+- [ ] Formulario de transferencia con selector de usuario destinatario.
+- [ ] Lista de historial con íconos de envío/recepción.
+- [ ] Enlace "Créditos" en la navbar.
+- [ ] Tests Vitest + RTL.
 
 ### 3. Publicaciones / servicios
 - [ ] Pendiente.
@@ -79,23 +93,29 @@ Este archivo se actualiza al inicio y al fin de cada sesión de trabajo.
 - **Estado del frontend:** Context API (`AuthProvider`) con persistencia en `localStorage`.
 - **Estilos:** Tailwind CSS v4 (config CSS-first, plugin oficial de Vite, sin `tailwind.config.js`).
 - **Testing frontend:** Vitest + React Testing Library + jsdom. Comando: `npm run test:run`.
+- **Testing backend:** Jest con `jest.config.js`. Comando: `npm run test:run` (usa `--runInBand`).
 - **Variable de entorno del frontend:** `VITE_API_URL` (en `client/.env`, ejemplo en `client/.env.example`).
 - **Lockfiles versionados:** `client/package-lock.json` y `server/package-lock.json` en control de versiones.
 - **Control de secretos:** `.env` ignorado siempre; `.env.example` documenta las variables necesarias.
-- **Estrategia de ramas:** `main` protegida, `dev` de integración, ramas por tarea (`feat/`, `fix/`, `docs/`, `chore/`), merge vía PR.
+- **Estrategia de ramas:** `main` protegida por ruleset de GitHub (PR obligatorio, sin force push), `dev` de integración, ramas por tarea (`feat/`, `fix/`, `docs/`, `chore/`), merge vía PR.
+
+---
+
+## Deuda técnica registrada
+
+- **Refactor a middleware:** el check de autoría del usuario está inline en `actualizar()` y `eliminar()`. Si se repite en créditos, publicaciones y calificaciones, conviene extraerlo a un middleware `esMismoUsuario` reutilizable.
+- **Roles/administradores:** el check bloquea a todos por igual. Si se necesita un rol admin, hay que agregar campo `rol` al modelo y permitir excepción.
+- **Validación de email:** delegada a `isEmail` de Sequelize. Podría endurecerse.
+- **Carga de avatares:** `avatar_url` existe en el modelo pero no hay endpoint de subida todavía.
 
 ---
 
 ## Próximos pasos inmediatos
 
-1. Fusionar PR #5 (`docs/verificacion-etapa-1`) hacia `dev`.
-2. Abrir PR de `dev` hacia `main` para cerrar formalmente la Etapa 1 del módulo de perfiles.
-3. Arrancar el siguiente módulo en rama `feat/creditos-tiempo`:
-   - Modelo `Transaccion` (origen, destino, horas, descripción, estado).
-   - Endpoints de transferencia de créditos.
-   - Vista de historial y saldo.
-4. Configurar Jest en `server/` y escribir las primeras pruebas de `authController`.
-5. Al cierre de cada módulo: PR de `dev` hacia `main`.
+1. Completar el módulo de créditos de tiempo (modelo, controlador, endpoints, frontend, tests).
+2. Fusionar PR de `feat/creditos-tiempo` hacia `dev`.
+3. Al cierre del módulo: PR de `dev` hacia `main`.
+4. Arrancar el siguiente módulo (publicaciones/servicios).
 
 ---
 
@@ -103,4 +123,4 @@ Este archivo se actualiza al inicio y al fin de cada sesión de trabajo.
 
 - Almacenamiento de avatares: local, Cloudinary o S3.
 - Política de expiración de tokens (refresh tokens o re-login).
-- Cronograma fino de los módulos restantes (créditos, publicaciones, calificaciones, mapa).
+- Cronograma fino de los módulos restantes (publicaciones, calificaciones, mapa).
