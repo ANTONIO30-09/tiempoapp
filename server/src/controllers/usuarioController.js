@@ -32,6 +32,11 @@ exports.obtenerPorId = async (req, res) => {
 exports.actualizar = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!req.usuario || req.usuario.id !== id) {
+      return res.status(403).json({ mensaje: 'No autorizado para modificar este usuario.' });
+    }
+
     const usuario = await Usuario.findByPk(id);
     if (!usuario) {
       return res.status(404).json({ mensaje: 'Usuario no encontrado.' });
@@ -63,6 +68,11 @@ exports.actualizar = async (req, res) => {
 exports.eliminar = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!req.usuario || req.usuario.id !== id) {
+      return res.status(403).json({ mensaje: 'No autorizado para eliminar este usuario.' });
+    }
+
     const usuario = await Usuario.findByPk(id);
     if (!usuario) {
       return res.status(404).json({ mensaje: 'Usuario no encontrado.' });
