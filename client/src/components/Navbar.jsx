@@ -30,6 +30,9 @@ export default function Navbar() {
 
           {autenticado ? (
             <>
+              <NavLink to="/creditos" className={enlaceClase}>
+                Créditos
+              </NavLink>
               <NavLink to="/perfil" className={enlaceClase}>
                 {usuario?.nombre || 'Perfil'}
               </NavLink>
