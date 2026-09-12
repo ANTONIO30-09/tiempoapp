@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Registro from './pages/Registro';
 import Login from './pages/Login';
 import Perfil from './pages/Perfil';
+import Creditos from './pages/Creditos';
 
 function Layout() {
   return (
@@ -45,6 +46,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Perfil />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/creditos"
+          element={
+            <ProtectedRoute>
+              <Creditos />
             </ProtectedRoute>
           }
         />
