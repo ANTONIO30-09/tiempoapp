@@ -30,6 +30,9 @@ export default function Navbar() {
 
           {autenticado ? (
             <>
+              <NavLink to="/publicaciones" className={enlaceClase}>
+                Publicaciones
+              </NavLink>
               <NavLink to="/creditos" className={enlaceClase}>
                 Créditos
               </NavLink>
