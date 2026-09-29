@@ -1,6 +1,7 @@
 const sequelize = require('../config/sequelize');
 const Usuario = require('./usuario');
 const Transaccion = require('./transaccion');
+const Publicacion = require('./publicacion');
 
 Usuario.hasMany(Transaccion, {
   as: 'transaccionesEnviadas',
@@ -22,10 +23,21 @@ Transaccion.belongsTo(Usuario, {
   foreignKey: 'receptor_id',
 });
 
+Usuario.hasMany(Publicacion, {
+  as: 'publicaciones',
+  foreignKey: 'autor_id',
+});
+
+Publicacion.belongsTo(Usuario, {
+  as: 'autor',
+  foreignKey: 'autor_id',
+});
+
 const db = {
   sequelize,
   Usuario,
   Transaccion,
+  Publicacion,
 };
 
 module.exports = db;

@@ -7,6 +7,7 @@ import Registro from './pages/Registro';
 import Login from './pages/Login';
 import Perfil from './pages/Perfil';
 import Creditos from './pages/Creditos';
+import Publicaciones from './pages/Publicaciones';
 
 function Layout() {
   return (
@@ -54,6 +55,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Creditos />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/publicaciones"
+          element={
+            <ProtectedRoute>
+              <Publicaciones />
             </ProtectedRoute>
           }
         />
