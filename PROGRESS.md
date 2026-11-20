@@ -115,6 +115,19 @@ Este archivo se actualiza al inicio y al fin de cada sesión de trabajo.
 
 ---
 
+### Chatbot asistente (Groq) — COMPLETADO Y VERIFICADO (en `feat/chatbot`)
+
+- [x] `POST /api/chatbot` protegido con `auth` + rate limit (10/min por usuario).
+- [x] `chatbotService` con base de conocimiento de la plataforma, historial saneado y timeout de 20 s.
+- [x] Key solo en `server/.env` (nunca en el cliente). Modelo configurable por `GROQ_MODEL`.
+- [x] Widget flotante `ChatbotWidget` (solo con sesión) y servicio del cliente.
+- [x] Tests: Jest (service, controller, rate limit) y Vitest (widget).
+- [x] Pruebas por curl: validación 401/400/400, rate limit 10x200 + 2x429, sin fugas de key/prompt, fuera de tema redirigido.
+- Incidente: `llama-3.1-8b-instant` fue retirado de Groq (404 `model_not_found`). Se cambió a `openai/gpt-oss-20b`.
+- Alternativa documentada: Ollama + gemma3 (API compatible en `localhost:11434/v1`) cambiando URL y modelo.
+
+---
+
 ## Notas del entorno local (importante para futuras sesiones)
 
 - **PostgreSQL del sistema:** puerto **5433** (no 5432). Cluster `16/main`.

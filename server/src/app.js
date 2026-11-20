@@ -9,6 +9,7 @@ const authRoutes = require('./routes/authRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const creditosRoutes = require('./routes/creditosRoutes');
 const publicacionRoutes = require('./routes/publicacionRoutes');
+const chatbotRoutes = require('./routes/chatbotRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -22,6 +23,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/creditos', creditosRoutes);
 app.use('/api/publicaciones', publicacionRoutes);
+app.use('/api/chatbot', chatbotRoutes);
 
 // Ruta de salud
 app.get('/api/health', (req, res) => {
