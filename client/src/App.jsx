@@ -1,6 +1,7 @@
-import React from 'react';
 import { Routes, Route, Outlet, Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import ChatbotWidget from './components/ChatbotWidget';
+import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Registro from './pages/Registro';
@@ -10,6 +11,7 @@ import Creditos from './pages/Creditos';
 import Publicaciones from './pages/Publicaciones';
 
 function Layout() {
+  const { autenticado } = useAuth();
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -19,6 +21,7 @@ function Layout() {
       <footer className="text-center text-xs text-gray-500 py-4">
         TIEMPOAPP — UNIFRANZ, PGM-611, 2026
       </footer>
+      {autenticado && <ChatbotWidget />}
     </div>
   );
 }

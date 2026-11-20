@@ -15,6 +15,7 @@ Proyecto académico de la Carrera de Ingeniería de Sistemas, Universidad Privad
 - **Base de datos:** PostgreSQL
 - **ORM:** Sequelize
 - **Autenticación:** JWT (JSON Web Tokens) + bcryptjs
+- **Chatbot con IA:** Groq (API compatible con OpenAI), modelo `openai/gpt-oss-20b`
 - **Tiempo real:** Socket.io (base para patrón Observer)
 - **Mapa interactivo:** Leaflet (pendiente de integrar)
 - **Almacenamiento de medios:** Por definir (local, Cloudinary o S3)
@@ -132,6 +133,7 @@ Estado del proyecto
 ☑ Frontend del módulo de perfiles (formularios, páginas, rutas y tests).
 ☑ Módulo de créditos de tiempo (transferencias atómicas + historial).
 ☑ Módulo de publicaciones / servicios (CRUD con filtros y control de autoría).
+☑ Chatbot asistente con IA (Groq).
 □ Módulo de calificaciones.
 □ Elementos multimedia.
 □ Mapa interactivo con Leaflet.
@@ -159,3 +161,8 @@ Ramas de tarea: feat/..., fix/..., docs/..., chore/... creadas desde dev.
 Flujo: rama de tarea → commits → push → PR hacia dev → merge. Al cerrar etapa: PR de dev hacia main.
 
 Commits en formato conventional commits, en español, en presente.
+
+### Chatbot (requiere `Authorization: Bearer <token>`)
+
+- `POST /api/chatbot` — Body `{ mensaje, historial? }`. Responde `{ respuesta }`. Máx. 500 caracteres por mensaje, historial de 10 mensajes y 10 preguntas por minuto por usuario. Requiere `GROQ_API_KEY` y `GROQ_MODEL` en `server/.env`.
+
